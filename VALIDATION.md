@@ -19,13 +19,17 @@ REST and MCP both call one shared journey service rather than implementing paral
 - output-schema validation
 - one sanitized audit event per invocation, including denials
 
-The persisted runtime has been exercised across process restart with the same provisioned sandbox credential. Equivalent financial-intelligence reads work through REST and MCP, and consent revocation through either interface causes equivalent protected reads to fail closed through both.
+The current accepted verification record contains **592 fast tests** and **47 protocol-level E2E tests**. The E2E layer exercises REST, MCP, and cross-interface behavior through real protocol boundaries rather than direct handler calls.
+
+Cross-interface tests create and mutate through one interface, read through the other, and verify identical canonical identities, schema identities, semantic outputs, consent-revocation behavior, and shared audit semantics. Persisted financial-intelligence parity is also exercised across process restart with the same provisioned sandbox credential.
 
 ## PostgreSQL evidence
 
 The default runnable server uses PostgreSQL-backed repositories for organization and workspace tenancy, API clients and credential verifiers, sandbox consumers, consents, connections, canonical financial records, idempotency entries, and audit events.
 
 Database tests exercise migration behavior, durable tenancy, credentials, consent, canonical records, idempotency, audit, restart durability, and concurrency-sensitive paths. Same-key writes serialize through a dedicated PostgreSQL advisory-lock namespace rather than relying on process-local memory.
+
+The accepted verification record also includes a passing PostgreSQL CI integration job on the exact repository revision. Earlier persisted-runtime evidence includes restart durability, consent revocation, credential rotation, and REST/MCP financial-intelligence parity through PostgreSQL-backed state.
 
 ## Exact-money and canonical-record validation
 
@@ -59,9 +63,9 @@ Validation covers:
 
 ## Institution conformance
 
-A fictional institution HTTP service and a closed conformance testkit exercise institution wire behavior and provider-adapter expectations without requiring live bank connectivity.
+The institution-facing layer carries **67 focused institution tests** plus **38 provider-testkit tests** in the accepted conformance record. The fictional institution HTTP service and closed conformance testkit exercise institution wire behavior, deterministic cursor replay, adapter safety, quarantine semantics, provider conformance, and safe source-observation ingestion behavior without requiring live bank connectivity.
 
-That layer proves the conformance and adapter boundary. It does not silently claim the remaining bridge from source observations into durable canonical records. Raw institution payloads in the current conformance path remain quarantined from canonical product state.
+That layer proves the conformance and adapter boundary. The remaining source-observation-to-canonical bridge is still separate work, and raw institution payloads in the current conformance path remain quarantined from canonical product state.
 
 ## A persistence correction
 
@@ -73,4 +77,4 @@ The default runnable path was therefore moved to PostgreSQL and the in-memory ru
 
 The current repository proves a locally runnable sandbox, persistent financial-data contracts, REST/MCP parity over one application core, consent and credential enforcement, institution conformance tooling, and deterministic intelligence over synthetic canonical data.
 
-It does not prove live institution connectivity, production identity, production deployment, or end-to-end live bank ingestion.
+Live institution connectivity, production identity, production deployment, and end-to-end live bank ingestion remain outside the current evidence set.
