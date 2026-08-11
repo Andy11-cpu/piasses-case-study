@@ -4,14 +4,14 @@
 
 PIASSES is a financial-data infrastructure project for institutions that need to expose, validate, normalize, and govern consumer-authorized financial information without binding downstream developers to one provider's semantics.
 
-The private repository contains the product and engineering implementation. This public case study documents the domain model, consent architecture, provenance strategy, transport design, corrections, and validation approach without publishing proprietary source code, credentials, institution-specific secrets, or private operational detail.
+The implementation remains private. This case study covers the domain model, consent architecture, provenance strategy, transport design, architectural corrections, and current evidence.
 
 ## My role
 
-I own the product direction, financial semantics, architecture constraints, acceptance criteria, and delivery decisions described here. I review implementation across contracts, persistence, REST/MCP behavior, conformance tests, and system evidence. Development uses AI-assisted engineering tools under my direction; the case study documents decisions and systems I own rather than claiming personal authorship of every implementation line.
+I own the product direction, financial semantics, architecture constraints, acceptance criteria, and delivery decisions described here. I review implementation across contracts, persistence, REST/MCP behavior, conformance tests, and system evidence. AI-assisted engineering tools are part of the build workflow; technical direction and acceptance remain mine.
 
 **Period:** active development in 2026, with the current institution-facing architecture developed through the summer.  
-**Current status:** a locally runnable PostgreSQL-backed sandbox exposes the same canonical capabilities through REST and MCP, with durable tenancy, credentials, consent, idempotency, audit, canonical financial records, deterministic intelligence, and institution API conformance tooling. Live bank ingestion and production identity remain explicitly outside the current claim.
+**Current status:** a locally runnable PostgreSQL-backed sandbox exposes the same canonical capabilities through REST and MCP, with durable tenancy, credentials, consent, idempotency, audit, canonical financial records, deterministic intelligence, and institution API conformance tooling. Live bank ingestion and production identity remain outside the current system boundary.
 
 ## Problem
 
@@ -81,13 +81,13 @@ Bearer secrets use keyed cryptographic verification and timing-safe comparison. 
 
 Writes, including consent revocation, require explicit idempotency. The durable scope includes workspace, capability, principal or credential identity, and validated request shape, so an identical replay returns the same result while a divergent replay fails as a conflict.
 
-## A design that changed
+## From protocol proof to durable runtime
 
-The first complete developer journey ran against deterministic in-memory sandbox state. That was useful for proving protocol shape, but it could not establish restart durability, transactional idempotency, persistent authorization, or exactly-once audit behavior.
+The first complete developer journey ran against deterministic in-memory sandbox state. That was enough to prove protocol shape, but not restart durability, transactional idempotency, persistent authorization, or exactly-once audit behavior.
 
-The default runnable composition was therefore moved onto PostgreSQL rather than allowing the in-memory proof to masquerade as product state. The current server composes persisted repositories, credential resolution, consent, canonical data, audit, and one shared application service beneath both REST and MCP.
+The default runnable composition was moved to PostgreSQL. The current server composes persisted repositories, credential resolution, consent, canonical data, audit, and one shared application service beneath both REST and MCP.
 
-A later institution-facing conformance layer then exposed another gap: source API behavior and provider adaptation could be proven independently, but durable source-observation ingestion into the canonical financial plane was still incomplete. That boundary remains explicit instead of being hidden behind the word "integration."
+The later institution-facing conformance layer exposed a second boundary: source API behavior and provider adaptation could be proven independently, while durable source-observation ingestion into the canonical financial plane remained incomplete. That gap is now explicit in the architecture instead of being hidden behind a generic integration claim.
 
 ## Canonical product planes
 
@@ -102,13 +102,13 @@ The separation makes it possible to reason about economic state, authorization s
 
 The project includes a fictional Canadian institution HTTP sandbox and a closed conformance testkit. The adapter boundary is exercised against deterministic fixtures and can quarantine raw institution payloads before canonicalization.
 
-The institution-to-canonical bridge is not yet complete. The current default runtime still uses deterministic synthetic canonical data, so this case study does not claim end-to-end live bank ingestion.
+The institution-to-canonical bridge is not yet complete. The current default runtime still uses deterministic synthetic canonical data rather than end-to-end live bank ingestion.
 
 ## Deterministic intelligence
 
 PIASSES contains a deterministic financial-intelligence layer over canonical transaction data, including exact-money summaries, velocity windows, outlier detection, recurring candidates, counterparty rhythm, weekday concentration, and structural exclusions.
 
-It does not produce forecasts, confidence scores, recommendations, or LLM-generated financial advice.
+It excludes forecasts, confidence scores, recommendations, and LLM-generated financial advice from this layer.
 
 ## Technology
 
@@ -123,8 +123,8 @@ It does not produce forecasts, confidence scores, recommendations, or LLM-genera
 
 ## Current boundary
 
-PIASSES proves a locally runnable sandbox with persistent financial-data contracts, REST/MCP parity over one core, consent enforcement, credential and scope controls, institution conformance tooling, and deterministic intelligence over synthetic data.
+PIASSES proves a locally runnable sandbox with persistent financial-data contracts, REST/MCP parity over one core, consent enforcement, credential and scope controls, institution conformance tooling, and deterministic intelligence over synthetic canonical data.
 
-It does **not** prove live institution connectivity, production identity, production deployment, or the completed source-observation-to-canonical bridge. Those are separate milestones, not implied extensions of the sandbox.
+Live institution connectivity, production identity, production deployment, and the completed source-observation-to-canonical bridge remain separate milestones.
 
 [Architecture](ARCHITECTURE.md) · [Technical decisions](TECHNICAL_DECISIONS.md) · [Validation](VALIDATION.md) · [Back to profile](https://github.com/Andy11-cpu)
